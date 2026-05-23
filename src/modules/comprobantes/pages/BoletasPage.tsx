@@ -1,0 +1,2 @@
+import { ComprobantesDocumentPage } from "@/modules/comprobantes/pages/ComprobantesDocumentPage"
+export function BoletasPage() { return <ComprobantesDocumentPage title="Boletas" description="Gestiona boletas electronicas, documentos, XML, CDR y reenvios SUNAT." tipo="BOLETA" /> }

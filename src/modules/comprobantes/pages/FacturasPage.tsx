@@ -1,0 +1,2 @@
+import { ComprobantesDocumentPage } from "@/modules/comprobantes/pages/ComprobantesDocumentPage"
+export function FacturasPage() { return <ComprobantesDocumentPage title="Facturas" description="Gestiona facturas electronicas, estado SUNAT, PDF, XML y CDR." tipo="FACTURA" /> }
