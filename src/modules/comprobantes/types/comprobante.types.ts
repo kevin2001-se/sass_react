@@ -7,13 +7,39 @@ export type ComprobanteCliente = {
   razon_social?: string | null
   nombre?: string | null
   numero_documento?: string | null
+  tipo_documento?: string | null
 }
 
+export type ComprobanteVentaDetalle = {
+  id: number
+  producto_id?: number | null
+  descripcion: string
+  unidad_medida?: string | null
+  cantidad_presentacion?: number | string | null
+  cantidad?: number | string | null
+  cantidad_disponible_devolucion?: number | string | null
+  precio_unitario?: number | string | null
+  descuento?: number | string | null
+  subtotal?: number | string | null
+  igv?: number | string | null
+  total?: number | string | null
+  producto?: { id: number; nombre: string } | null
+  presentacion?: { id: number; nombre: string } | null
+}
 export type ComprobanteVenta = {
   id: number
   numero_comprobante?: string | null
+  estado?: string | null
+  subtotal?: number | string | null
+  total_igv?: number | string | null
+  total_descuento?: number | string | null
   total?: number | string | null
   cliente?: ComprobanteCliente | null
+  detalles?: ComprobanteVentaDetalle[]
+  notas_credito_count?: number | string | null
+  notas_credito?: unknown[]
+  notas_debito_count?: number | string | null
+  notas_debito?: unknown[]
 }
 
 export type ComprobanteElectronico = {
@@ -38,12 +64,19 @@ export type ComprobanteElectronico = {
   rechazado_at?: string | null
   venta?: ComprobanteVenta | null
   cliente?: ComprobanteCliente | null
+  subtotal?: number | string | null
+  total_igv?: number | string | null
+  total_descuento?: number | string | null
   total?: number | string | null
   tiene_xml?: boolean
   tiene_cdr?: boolean
   tiene_pdf_a4?: boolean
   tiene_ticket_80?: boolean
   tiene_ticket_58?: boolean
+  notas_credito_count?: number | string | null
+  notas_credito?: unknown[]
+  notas_debito_count?: number | string | null
+  notas_debito?: unknown[]
   created_at?: string
 }
 
@@ -145,6 +178,42 @@ export function getComprobanteClienteNombre(comprobante: ComprobanteElectronico)
   return cliente?.razon_social || cliente?.nombres || cliente?.nombre || "Clientes varios"
 }
 
-export function getComprobanteTotal(comprobante: ComprobanteElectronico) {
-  return Number(comprobante.total ?? comprobante.venta?.total ?? 0)
+function toComprobanteNumber(value: number | string | null | undefined) {
+  return Number(value ?? 0)
 }
+
+export function getComprobanteSubtotal(comprobante: ComprobanteElectronico) {
+  return toComprobanteNumber(comprobante.subtotal ?? comprobante.venta?.subtotal ?? 0)
+}
+
+export function getComprobanteIgv(comprobante: ComprobanteElectronico) {
+  return toComprobanteNumber(comprobante.total_igv ?? comprobante.venta?.total_igv ?? 0)
+}
+
+export function getComprobanteDescuento(comprobante: ComprobanteElectronico) {
+  return toComprobanteNumber(comprobante.total_descuento ?? comprobante.venta?.total_descuento ?? 0)
+}
+
+export function getComprobanteTotal(comprobante: ComprobanteElectronico) {
+  return toComprobanteNumber(comprobante.total ?? comprobante.venta?.total ?? 0)
+}
+export function getComprobanteNotasCreditoCount(comprobante: ComprobanteElectronico) {
+  const direct = comprobante.notas_credito_count
+  if (direct !== undefined && direct !== null) return Number(direct)
+  if (Array.isArray(comprobante.notas_credito)) return comprobante.notas_credito.length
+  const ventaCount = comprobante.venta?.notas_credito_count
+  if (ventaCount !== undefined && ventaCount !== null) return Number(ventaCount)
+  if (Array.isArray(comprobante.venta?.notas_credito)) return comprobante.venta.notas_credito.length
+  return 0
+}
+
+export function getComprobanteNotasDebitoCount(comprobante: ComprobanteElectronico) {
+  const direct = comprobante.notas_debito_count
+  if (direct !== undefined && direct !== null) return Number(direct)
+  if (Array.isArray(comprobante.notas_debito)) return comprobante.notas_debito.length
+  const ventaCount = comprobante.venta?.notas_debito_count
+  if (ventaCount !== undefined && ventaCount !== null) return Number(ventaCount)
+  if (Array.isArray(comprobante.venta?.notas_debito)) return comprobante.venta.notas_debito.length
+  return 0
+}
+

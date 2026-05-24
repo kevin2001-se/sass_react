@@ -1,5 +1,5 @@
-import { api } from "@/shared/services/api"
-import type { PaginatedResponse, PaginationMeta, Venta, VentaFilters } from "@/modules/ventas/types/venta.types"
+﻿import { api } from "@/shared/services/api"
+import type { AnularVentaPayload, PaginatedResponse, PaginationMeta, Venta, VentaFilters } from "@/modules/ventas/types/venta.types"
 
 type LaravelClassicPaginated<T> = PaginationMeta & {
   data: T[]
@@ -44,6 +44,11 @@ export const ventaService = {
 
   async getVenta(id: number) {
     const { data } = await api.get<{ data: Venta } | Venta>(`/ventas/${id}`)
+    return "data" in data ? data.data : data
+  },
+
+  async anularVenta(id: number, payload: AnularVentaPayload) {
+    const { data } = await api.post<{ data: Venta } | Venta>(`/ventas/${id}/anular`, payload)
     return "data" in data ? data.data : data
   },
 }

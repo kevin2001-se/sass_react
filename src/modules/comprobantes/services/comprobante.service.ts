@@ -1,4 +1,4 @@
-import { api } from "@/shared/services/api"
+﻿import { api } from "@/shared/services/api"
 import type { ComprobanteElectronico, ComprobanteFilters, PaginatedResponse } from "@/modules/comprobantes/types/comprobante.types"
 import { ventaService } from "@/modules/ventas/services/venta.service"
 import type { Venta } from "@/modules/ventas/types/venta.types"
@@ -24,10 +24,16 @@ function ventaPendienteToComprobante(venta: Venta): ComprobanteElectronico {
     venta: {
       id: venta.id,
       numero_comprobante: venta.numero_comprobante,
+      subtotal: venta.subtotal,
+      total_igv: venta.total_igv ?? venta.igv ?? 0,
+      total_descuento: venta.total_descuento ?? venta.descuento ?? 0,
       total: venta.total,
       cliente: venta.cliente,
     },
     cliente: venta.cliente,
+    subtotal: venta.subtotal,
+    total_igv: venta.total_igv ?? venta.igv ?? 0,
+    total_descuento: venta.total_descuento ?? venta.descuento ?? 0,
     total: venta.total,
     tiene_xml: false,
     tiene_cdr: false,

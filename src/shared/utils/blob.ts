@@ -34,3 +34,6 @@ export function openPrintableBlob(blob: Blob) {
 
   return true
 }
+export function printBlob(blob: Blob) {
+  return openPrintableBlob(blob)
+}

@@ -73,10 +73,17 @@ export type Venta = {
   estado: VentaEstado
   fecha_emision: string
   observacion?: string | null
+  motivo_anulacion?: string | null
+  anulado_at?: string | null
+  anulado_by?: number | null
   detalles?: VentaDetalle[]
   pagos?: VentaPago[]
   metodos_pago?: PosMetodoPago[]
   comprobante_electronico?: VentaComprobanteElectronico | null
+  notas_credito_count?: number | string | null
+  notas_credito?: unknown[]
+  notas_debito_count?: number | string | null
+  notas_debito?: unknown[]
 }
 
 export type VentaFilters = {
@@ -109,3 +116,20 @@ export type PaginatedResponse<T> = {
 export function getVentaClienteNombre(cliente?: VentaCliente | null) {
   return cliente?.razon_social || cliente?.nombres || cliente?.nombre || "Clientes varios"
 }
+
+export type AnularVentaPayload = {
+  motivo: string
+}
+
+export function getVentaNotasCreditoCount(venta: Venta) {
+  if (venta.notas_credito_count !== undefined && venta.notas_credito_count !== null) return Number(venta.notas_credito_count)
+  if (Array.isArray(venta.notas_credito)) return venta.notas_credito.length
+  return 0
+}
+
+export function getVentaNotasDebitoCount(venta: Venta) {
+  if (venta.notas_debito_count !== undefined && venta.notas_debito_count !== null) return Number(venta.notas_debito_count)
+  if (Array.isArray(venta.notas_debito)) return venta.notas_debito.length
+  return 0
+}
+

@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom"
+﻿import { Link, useParams } from "react-router-dom"
 import { AlertCircle, ArrowLeft } from "lucide-react"
 
 import { VentaDetailHeader } from "@/modules/ventas/components/VentaDetailHeader"
@@ -66,6 +66,15 @@ export function VentaDetailPage() {
         <div className="space-y-6">
           <VentaResumenCard venta={venta} />
           <VentaPagosCard pagos={venta.pagos} />
+          {venta.estado === "ANULADA" && (venta.motivo_anulacion || venta.anulado_at) ? (
+            <Card className="border-destructive/30">
+              <CardHeader><CardTitle>Anulación</CardTitle></CardHeader>
+              <CardContent className="space-y-2 text-sm text-muted-foreground">
+                {venta.motivo_anulacion ? <p>{venta.motivo_anulacion}</p> : null}
+                {venta.anulado_at ? <p>Anulada el {new Date(venta.anulado_at).toLocaleString()}</p> : null}
+              </CardContent>
+            </Card>
+          ) : null}
           {venta.observacion ? (
             <Card>
               <CardHeader><CardTitle>Observacion</CardTitle></CardHeader>

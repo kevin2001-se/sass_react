@@ -1,11 +1,10 @@
 import { useState } from "react"
 import { AlertCircle } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 import { ComprobanteFilters } from "@/modules/comprobantes/components/ComprobanteFilters"
 import { ComprobantesTable } from "@/modules/comprobantes/components/ComprobantesTable"
-import { NotaElectronicaFormModal } from "@/modules/comprobantes/components/NotaElectronicaFormModal"
 import { useComprobantes } from "@/modules/comprobantes/hooks/useComprobantes"
-import { useNotaElectronicaMutations } from "@/modules/comprobantes/hooks/useNotasElectronicas"
 import type { ComprobanteElectronico, ComprobanteFilters as Filters } from "@/modules/comprobantes/types/comprobante.types"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { Button } from "@/shared/components/ui/button"
@@ -14,16 +13,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui
 type Props = { title: string; description: string; tipo: string }
 
 export function ComprobantesDocumentPage({ title, description, tipo }: Props) {
+  const navigate = useNavigate()
   const [filters, setFilters] = useState<Filters>({ tipo_comprobante: tipo, page: 1, per_page: 15 })
-  const [notaTipo, setNotaTipo] = useState<"NOTA_CREDITO" | "NOTA_DEBITO" | null>(null)
-  const [selected, setSelected] = useState<ComprobanteElectronico | null>(null)
   const { data, isLoading, isError, refetch } = useComprobantes({ ...filters, tipo_comprobante: tipo })
-  const notaMutation = useNotaElectronicaMutations(notaTipo ?? "NOTA_CREDITO")
   const meta = data?.meta
 
   const openNota = (comprobante: ComprobanteElectronico, tipoNota: "NOTA_CREDITO" | "NOTA_DEBITO") => {
-    setSelected(comprobante)
-    setNotaTipo(tipoNota)
+    const path = tipoNota === "NOTA_CREDITO" ? "notas-credito" : "notas-debito"
+    navigate(`/comprobantes/${path}/nueva?comprobante_id=${comprobante.id}`)
   }
 
   return (
@@ -38,7 +35,6 @@ export function ComprobantesDocumentPage({ title, description, tipo }: Props) {
           {meta && meta.last_page > 1 ? <div className="flex justify-end gap-2"><Button variant="outline" size="sm" disabled={meta.current_page <= 1} onClick={() => setFilters((f) => ({ ...f, page: Number(f.page ?? 1) - 1 }))}>Anterior</Button><Button variant="outline" size="sm" disabled={meta.current_page >= meta.last_page} onClick={() => setFilters((f) => ({ ...f, page: Number(f.page ?? 1) + 1 }))}>Siguiente</Button></div> : null}
         </CardContent>
       </Card>
-      {notaTipo ? <NotaElectronicaFormModal open={Boolean(notaTipo)} tipo={notaTipo} comprobante={selected} loading={notaMutation.isPending} onOpenChange={(open) => { if (!open) setNotaTipo(null) }} onSubmit={(values) => notaMutation.mutate(values, { onSuccess: () => setNotaTipo(null) })} /> : null}
     </div>
   )
 }

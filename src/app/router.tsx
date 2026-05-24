@@ -24,7 +24,11 @@ import { GuiaRemisionDetailPage } from "@/modules/comprobantes/guias-remision/pa
 import { GuiaRemisionCreatePage } from "@/modules/comprobantes/guias-remision/pages/GuiaRemisionCreatePage"
 import { GuiaDesdeVentaPage } from "@/modules/comprobantes/guias-remision/pages/GuiaDesdeVentaPage"
 import { NotasCreditoPage } from "@/modules/comprobantes/pages/NotasCreditoPage"
+import { NotaCreditoDetailPage } from "@/modules/comprobantes/notas-credito/pages/NotaCreditoDetailPage"
+import { NotaCreditoCreatePage } from "@/modules/comprobantes/notas-credito/pages/NotaCreditoCreatePage"
 import { NotasDebitoPage } from "@/modules/comprobantes/pages/NotasDebitoPage"
+import { NotaDebitoDetailPage } from "@/modules/comprobantes/notas-debito/pages/NotaDebitoDetailPage"
+import { NotaDebitoCreatePage } from "@/modules/comprobantes/notas-debito/pages/NotaDebitoCreatePage"
 import { NotasVentaPage } from "@/modules/comprobantes/pages/NotasVentaPage"
 import { ResumenDiarioPage } from "@/modules/comprobantes/pages/ResumenDiarioPage"
 import { DashboardPage } from "@/modules/dashboard/pages/DashboardPage"
@@ -167,11 +171,26 @@ export const router = createBrowserRouter([
             ],
           },
           {
-            element: <PermissionRoute permission="sunat.notas.ver" />,
+            element: <PermissionRoute permissions={["sunat.notas.ver", "notas_credito.ver"]} />,
             children: [
               { path: "/comprobantes/notas-credito", element: <NotasCreditoPage /> },
-              { path: "/comprobantes/notas-debito", element: <NotasDebitoPage /> },
+              { path: "/comprobantes/notas-credito/:id", element: <NotaCreditoDetailPage /> },
             ],
+          },
+          {
+            element: <PermissionRoute permissions={["sunat.notas.crear", "notas_credito.crear"]} />,
+            children: [{ path: "/comprobantes/notas-credito/nueva", element: <NotaCreditoCreatePage /> }],
+          },
+          {
+            element: <PermissionRoute permissions={["sunat.notas.ver", "notas_debito.ver"]} />,
+            children: [
+              { path: "/comprobantes/notas-debito", element: <NotasDebitoPage /> },
+              { path: "/comprobantes/notas-debito/:id", element: <NotaDebitoDetailPage /> },
+            ],
+          },
+          {
+            element: <PermissionRoute permissions={["sunat.notas.crear", "notas_debito.crear"]} />,
+            children: [{ path: "/comprobantes/notas-debito/nueva", element: <NotaDebitoCreatePage /> }],
           },
           {
             element: <PermissionRoute permission="sunat.guias.ver" />,

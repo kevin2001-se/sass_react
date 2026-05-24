@@ -44,7 +44,7 @@ type SidebarNavItem = {
   label: string
   path: string
   icon?: LucideIcon
-  permission?: string
+  permission?: string | string[]
 }
 
 type SidebarNavGroup = {
@@ -110,8 +110,10 @@ const sidebarGroups: SidebarNavGroup[] = [
       { label: "Notas de venta", path: "/comprobantes/notas-venta", permission: "comprobantes.notas_venta.ver" },
       { label: "Boletas", path: "/comprobantes/boletas", permission: "sunat.comprobantes.ver" },
       { label: "Facturas", path: "/comprobantes/facturas", permission: "sunat.comprobantes.ver" },
-      { label: "Notas de credito", path: "/comprobantes/notas-credito", permission: "sunat.notas.ver" },
-      { label: "Notas de debito", path: "/comprobantes/notas-debito", permission: "sunat.notas.ver" },
+      { label: "Notas de credito", path: "/comprobantes/notas-credito", permission: ["sunat.notas.ver", "notas_credito.ver"] },
+      { label: "Nueva nota credito", path: "/comprobantes/notas-credito/nueva", permission: ["sunat.notas.crear", "notas_credito.crear"] },
+      { label: "Notas de debito", path: "/comprobantes/notas-debito", permission: ["sunat.notas.ver", "notas_debito.ver"] },
+      { label: "Nueva nota debito", path: "/comprobantes/notas-debito/nueva", permission: ["sunat.notas.crear", "notas_debito.crear"] },
       { label: "Guias de remision", path: "/comprobantes/guias-remision", icon: SendToBack, permission: "sunat.guias.ver" },
       { label: "Nueva desde venta", path: "/comprobantes/guias-remision/desde-venta", permission: "sunat.guias.ver" },
       { label: "Resumen diario", path: "/comprobantes/resumen-diario", icon: ClipboardList, permission: "sunat.resumenes.ver" },
@@ -235,6 +237,7 @@ function AppSidebarGroup({
 export function AppSidebar() {
   const location = useLocation()
   const hasPermission = useAuthStore((state) => state.hasPermission)
+  const hasAnyPermission = useAuthStore((state) => state.hasAnyPermission)
   const { isMobile, setOpenMobile } = useSidebar()
 
   const onNavigate = React.useCallback(() => {
@@ -244,8 +247,8 @@ export function AppSidebar() {
   }, [isMobile, setOpenMobile])
 
   const canShowItem = React.useCallback(
-    (item: SidebarNavItem) => !item.permission || hasPermission(item.permission),
-    [hasPermission],
+    (item: SidebarNavItem) => !item.permission || (Array.isArray(item.permission) ? hasAnyPermission(item.permission) : hasPermission(item.permission)),
+    [hasAnyPermission, hasPermission],
   )
 
   const visibleGroups = React.useMemo(

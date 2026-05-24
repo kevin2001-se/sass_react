@@ -3,7 +3,7 @@ import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tan
 import { VentaEstadoBadge } from "@/modules/ventas/components/VentaEstadoBadge"
 import { VentaQuickActions } from "@/modules/ventas/components/VentaQuickActions"
 import type { Venta } from "@/modules/ventas/types/venta.types"
-import { getVentaClienteNombre } from "@/modules/ventas/types/venta.types"
+import { getVentaClienteNombre, getVentaNotasCreditoCount, getVentaNotasDebitoCount } from "@/modules/ventas/types/venta.types"
 import { Badge } from "@/shared/components/ui/badge"
 import { Skeleton } from "@/shared/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/components/ui/table"
@@ -25,7 +25,11 @@ export function VentasTable({ ventas, isLoading }: VentasTableProps) {
       cell: ({ row }) => (
         <div>
           <p className="font-medium">{row.original.numero_comprobante}</p>
-          <Badge variant="outline" className="mt-1">{row.original.tipo_comprobante.replaceAll("_", " ")}</Badge>
+          <div className="mt-1 flex flex-wrap gap-1">
+            <Badge variant="outline">{row.original.tipo_comprobante.replaceAll("_", " ")}</Badge>
+            {getVentaNotasCreditoCount(row.original) > 0 ? <Badge className="bg-indigo-50 text-indigo-700 hover:bg-indigo-50">Con NC {getVentaNotasCreditoCount(row.original)}</Badge> : null}
+            {getVentaNotasDebitoCount(row.original) > 0 ? <Badge className="bg-amber-50 text-amber-700 hover:bg-amber-50">Con ND {getVentaNotasDebitoCount(row.original)}</Badge> : null}
+          </div>
         </div>
       ),
     },
@@ -111,3 +115,4 @@ function TableSkeleton() {
     </div>
   )
 }
+
