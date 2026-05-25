@@ -1,0 +1,5 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { serieService } from "@/modules/configuracion/series/services/serie.service"
+import type { SerieFilters, SerieFormValues } from "@/modules/configuracion/series/types/serie.types"
+export function useSeries(filters: SerieFilters) { return useQuery({ queryKey: ["configuracion", "series", filters], queryFn: () => serieService.list(filters) }) }
+export function useSerieMutations() { const qc = useQueryClient(); return { create: useMutation({ mutationFn: serieService.create, onSuccess: () => qc.invalidateQueries({ queryKey: ["configuracion", "series"] }) }), update: useMutation({ mutationFn: ({ id, values }: { id: number; values: SerieFormValues }) => serieService.update(id, values), onSuccess: () => qc.invalidateQueries({ queryKey: ["configuracion", "series"] }) }), remove: useMutation({ mutationFn: serieService.remove, onSuccess: () => qc.invalidateQueries({ queryKey: ["configuracion", "series"] }) }) } }

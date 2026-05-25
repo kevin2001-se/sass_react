@@ -1,0 +1,5 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { usuarioService } from "@/modules/configuracion/usuarios/services/usuario.service"
+import type { UsuarioFilters, UsuarioFormValues } from "@/modules/configuracion/usuarios/types/usuario.types"
+export function useUsuarios(filters: UsuarioFilters) { return useQuery({ queryKey: ["configuracion", "usuarios", filters], queryFn: () => usuarioService.list(filters) }) }
+export function useUsuarioMutations() { const qc = useQueryClient(); return { create: useMutation({ mutationFn: usuarioService.create, onSuccess: () => qc.invalidateQueries({ queryKey: ["configuracion", "usuarios"] }) }), update: useMutation({ mutationFn: ({ id, values }: { id: number; values: UsuarioFormValues }) => usuarioService.update(id, values), onSuccess: () => qc.invalidateQueries({ queryKey: ["configuracion", "usuarios"] }) }), remove: useMutation({ mutationFn: usuarioService.remove, onSuccess: () => qc.invalidateQueries({ queryKey: ["configuracion", "usuarios"] }) }) } }

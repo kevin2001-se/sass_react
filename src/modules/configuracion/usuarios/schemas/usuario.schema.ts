@@ -1,0 +1,3 @@
+import { z } from "zod"
+export function usuarioSchema(isEdit = false) { return z.object({ name: z.string().min(1, "El nombre es obligatorio"), email: z.string().email("Email inválido"), password: isEdit ? z.string().optional() : z.string().min(8, "La contraseña debe tener al menos 8 caracteres"), estado: z.boolean(), roles: z.array(z.number()).min(1, "Selecciona un rol"), tiendas: z.array(z.number()).min(1, "Selecciona al menos una tienda"), tienda_activa_id: z.number().nullable().optional() }) }
+export type UsuarioSchemaValues = z.infer<ReturnType<typeof usuarioSchema>>

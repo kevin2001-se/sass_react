@@ -121,6 +121,17 @@ const sidebarGroups: SidebarNavGroup[] = [
     ],
   },
   {
+    label: "Compras",
+    icon: ClipboardList,
+    children: [
+      { label: "Proveedores", path: "/compras/proveedores", permission: "proveedores.ver" },
+      { label: "Registrar compra", path: "/compras/registrar", permission: "compras.crear" },
+      { label: "Historial compras", path: "/compras/historial", permission: "compras.ver" },
+      { label: "Cuentas por pagar", path: "/compras/cuentas-por-pagar", permission: "compras.ver" },
+      { label: "Pagos proveedor", path: "/compras/pagos-proveedor", permission: "compras.ver" },
+    ],
+  },
+  {
     label: "Reportes",
     icon: BarChart3,
     children: [
@@ -135,11 +146,11 @@ const sidebarGroups: SidebarNavGroup[] = [
     label: "Configuracion",
     icon: Settings,
     children: [
-      { label: "Empresa", path: "/configuracion/empresa" },
-      { label: "Tiendas", path: "/configuracion/tiendas" },
-      { label: "Usuarios", path: "/configuracion/usuarios" },
-      { label: "Roles y permisos", path: "/configuracion/roles-permisos" },
-      { label: "Series", path: "/configuracion/series" },
+      { label: "Empresa", path: "/configuracion/empresa", permission: "configuracion.empresa.ver" },
+      { label: "Tiendas", path: "/configuracion/tiendas", permission: "tiendas.ver" },
+      { label: "Usuarios", path: "/configuracion/usuarios", permission: "usuarios.ver" },
+      { label: "Roles y permisos", path: "/configuracion/roles-permisos", permission: "roles.ver" },
+      { label: "Series", path: "/configuracion/series", permission: "series.ver" },
       { label: "SUNAT", path: "/configuracion/sunat", icon: Sun, permission: "sunat.configuracion.ver" },
       { label: "Parametros", path: "/configuracion/parametros" },
     ],

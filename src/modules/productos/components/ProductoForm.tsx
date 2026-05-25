@@ -1,4 +1,4 @@
-﻿import { zodResolver } from "@hookform/resolvers/zod"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react"
 import { FormProvider, useForm, useFormContext } from "react-hook-form"
 import { Link } from "react-router-dom"
@@ -25,6 +25,8 @@ type ProductoFormProps = {
   isSubmitting?: boolean
   serverErrors?: LaravelValidationErrors
   onSubmit: (values: ProductoFormValues) => void
+  onCancel?: () => void
+  submitLabel?: string
 }
 
 function defaultValues(catalogos?: ProductoCatalogos): ProductoFormValues {
@@ -98,7 +100,7 @@ function productToFormValues(producto: Producto | undefined, catalogos: Producto
   }
 }
 
-export function ProductoForm({ producto, catalogos, isSubmitting, serverErrors, onSubmit }: ProductoFormProps) {
+export function ProductoForm({ producto, catalogos, isSubmitting, serverErrors, onSubmit, onCancel, submitLabel }: ProductoFormProps) {
   const configuracionQuery = useProductoConfiguracion()
   const autogenerarCodigoInterno = Boolean(configuracionQuery.data?.autogenerar_codigo_interno)
   const form = useForm<ProductoFormValues>({
@@ -214,8 +216,12 @@ export function ProductoForm({ producto, catalogos, isSubmitting, serverErrors, 
         </Tabs>
 
         <div className="flex justify-end gap-3">
-          <Button asChild type="button" variant="outline"><Link to="/productos">Cancelar</Link></Button>
-          <Button disabled={isSubmitting} type="submit">{isSubmitting ? "Guardando..." : "Guardar producto"}</Button>
+          {onCancel ? (
+            <Button type="button" variant="outline" onClick={onCancel}>Cancelar</Button>
+          ) : (
+            <Button asChild type="button" variant="outline"><Link to="/productos">Cancelar</Link></Button>
+          )}
+          <Button disabled={isSubmitting} type="submit">{isSubmitting ? "Guardando..." : submitLabel ?? "Guardar producto"}</Button>
         </div>
       </form>
     </FormProvider>

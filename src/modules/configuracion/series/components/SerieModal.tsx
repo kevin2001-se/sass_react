@@ -1,0 +1,19 @@
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useEffect } from "react"
+import { useForm } from "react-hook-form"
+import { Button } from "@/shared/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/components/ui/dialog"
+import { Input } from "@/shared/components/ui/input"
+import { Switch } from "@/shared/components/ui/switch"
+import { AppCombobox } from "@/shared/components/forms/AppCombobox"
+import { serieSchema } from "@/modules/configuracion/series/schemas/serie.schema"
+import { tipoComprobanteOptions, type SerieComprobante, type SerieFormValues } from "@/modules/configuracion/series/types/serie.types"
+import type { Tienda } from "@/modules/configuracion/tiendas/types/tienda.types"
+import type { LaravelValidationErrors } from "@/shared/services/api"
+
+export function SerieModal({ open, serie, tiendas, serverErrors, isSubmitting, onOpenChange, onSubmit }: { open: boolean; serie?: SerieComprobante | null; tiendas: Tienda[]; serverErrors?: LaravelValidationErrors; isSubmitting?: boolean; onOpenChange: (open: boolean) => void; onSubmit: (values: SerieFormValues) => void }) {
+  const form = useForm<SerieFormValues>({ resolver: zodResolver(serieSchema) as never, defaultValues: { tienda_id: 0, tipo_comprobante: "BOLETA", serie: "", correlativo_actual: 0, estado: true } })
+  useEffect(() => { if (open) form.reset({ tienda_id: serie?.tienda_id ?? tiendas[0]?.id ?? 0, tipo_comprobante: serie?.tipo_comprobante ?? "BOLETA", serie: serie?.serie ?? "", correlativo_actual: serie?.correlativo_actual ?? 0, estado: serie?.estado ?? true }) }, [open, serie, tiendas, form])
+  useEffect(() => { Object.entries(serverErrors ?? {}).forEach(([k, v]) => form.setError(k as keyof SerieFormValues, { message: v[0] })) }, [serverErrors, form])
+  return <Dialog open={open} onOpenChange={onOpenChange}><DialogContent><DialogHeader><DialogTitle>{serie ? "Editar serie" : "Nueva serie"}</DialogTitle></DialogHeader><form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}><label className="space-y-2 text-sm font-medium"><span>Tienda</span><AppCombobox value={form.watch("tienda_id") || null} onChange={(v) => form.setValue("tienda_id", Number(v))} options={tiendas.map((t) => ({ value: t.id, label: t.nombre, description: t.codigo ?? undefined }))} error={!!form.formState.errors.tienda_id} />{form.formState.errors.tienda_id ? <p className="text-sm text-destructive">{form.formState.errors.tienda_id.message}</p> : null}</label><label className="space-y-2 text-sm font-medium"><span>Tipo</span><AppCombobox value={form.watch("tipo_comprobante")} onChange={(v) => form.setValue("tipo_comprobante", v as SerieFormValues["tipo_comprobante"])} options={tipoComprobanteOptions} /></label><div className="grid gap-4 md:grid-cols-2"><label className="space-y-2 text-sm font-medium">Serie<Input {...form.register("serie")} aria-invalid={!!form.formState.errors.serie} />{form.formState.errors.serie ? <p className="text-sm text-destructive">{form.formState.errors.serie.message}</p> : null}</label><label className="space-y-2 text-sm font-medium">Correlativo actual<Input type="number" {...form.register("correlativo_actual")} aria-invalid={!!form.formState.errors.correlativo_actual} /></label></div><label className="flex items-center gap-3 text-sm"><Switch checked={form.watch("estado")} onCheckedChange={(v) => form.setValue("estado", v)} /> Serie activa</label><div className="flex justify-end gap-2"><Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button><Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Guardando..." : "Guardar"}</Button></div></form></DialogContent></Dialog>
+}

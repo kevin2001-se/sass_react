@@ -32,7 +32,12 @@ import { NotaDebitoCreatePage } from "@/modules/comprobantes/notas-debito/pages/
 import { NotasVentaPage } from "@/modules/comprobantes/pages/NotasVentaPage"
 import { ResumenDiarioPage } from "@/modules/comprobantes/pages/ResumenDiarioPage"
 import { DashboardPage } from "@/modules/dashboard/pages/DashboardPage"
+import { EmpresaPage } from "@/modules/configuracion/empresa/pages/EmpresaPage"
+import { RolesPage } from "@/modules/configuracion/roles/pages/RolesPage"
+import { SeriesPage } from "@/modules/configuracion/series/pages/SeriesPage"
 import { SunatConfiguracionPage } from "@/modules/configuracion/sunat/pages/SunatConfiguracionPage"
+import { TiendasPage } from "@/modules/configuracion/tiendas/pages/TiendasPage"
+import { UsuariosPage } from "@/modules/configuracion/usuarios/pages/UsuariosPage"
 import { AjusteInventarioPage } from "@/modules/inventario/pages/AjusteInventarioPage"
 import { EntradaInventarioPage } from "@/modules/inventario/pages/EntradaInventarioPage"
 import { KardexPage } from "@/modules/inventario/pages/KardexPage"
@@ -45,6 +50,10 @@ import { ProductoDetailPage } from "@/modules/productos/pages/ProductoDetailPage
 import { ProductoEditPage } from "@/modules/productos/pages/ProductoEditPage"
 import { ProductosPage } from "@/modules/productos/pages/ProductosPage"
 import { PosPage } from "@/modules/pos/pages/PosPage"
+import { CompraCreatePage } from "@/modules/compras/compras/pages/CompraCreatePage"
+import { CompraDetailPage } from "@/modules/compras/compras/pages/CompraDetailPage"
+import { ComprasHistorialPage } from "@/modules/compras/compras/pages/ComprasHistorialPage"
+import { ProveedoresPage } from "@/modules/compras/proveedores/pages/ProveedoresPage"
 import { VentaDetailPage } from "@/modules/ventas/pages/VentaDetailPage"
 import { VentasHistorialPage } from "@/modules/ventas/pages/VentasHistorialPage"
 import { PlaceholderPage } from "@/shared/components/layout/PlaceholderPage"
@@ -218,9 +227,20 @@ export const router = createBrowserRouter([
             element: <PermissionRoute permission="caja.historial" />,
             children: [{ path: "/caja/historial", element: <CajaHistorialPage /> }],
           },
+          { path: "/compras", element: <Navigate to="/compras/proveedores" replace /> },
+          {
+            element: <PermissionRoute permission="proveedores.ver" />,
+            children: [{ path: "/compras/proveedores", element: <ProveedoresPage /> }],
+          },
           {
             element: <PermissionRoute permission="compras.ver" />,
-            children: [{ path: "/compras", element: <PlaceholderPage title="Compras" /> }],
+            children: [
+              { path: "/compras/registrar", element: <CompraCreatePage /> },
+              { path: "/compras/historial", element: <ComprasHistorialPage /> },
+              { path: "/compras/:id", element: <CompraDetailPage /> },
+              { path: "/compras/cuentas-por-pagar", element: <PlaceholderPage title="Cuentas por pagar" /> },
+              { path: "/compras/pagos-proveedor", element: <PlaceholderPage title="Pagos proveedor" /> },
+            ],
           },
           {
             element: <PermissionRoute permission="sunat.ver" />,
@@ -238,12 +258,12 @@ export const router = createBrowserRouter([
             ],
           },
 
-          { path: "/configuracion", element: <PlaceholderPage title="Configuracion" /> },
-          { path: "/configuracion/empresa", element: <PlaceholderPage title="Empresa" /> },
-          { path: "/configuracion/tiendas", element: <PlaceholderPage title="Tiendas" /> },
-          { path: "/configuracion/usuarios", element: <PlaceholderPage title="Usuarios" /> },
-          { path: "/configuracion/roles-permisos", element: <PlaceholderPage title="Roles y permisos" /> },
-          { path: "/configuracion/series", element: <PlaceholderPage title="Series" /> },
+          { path: "/configuracion", element: <Navigate to="/configuracion/empresa" replace /> },
+          { element: <PermissionRoute permission="configuracion.empresa.ver" />, children: [{ path: "/configuracion/empresa", element: <EmpresaPage /> }] },
+          { element: <PermissionRoute permission="tiendas.ver" />, children: [{ path: "/configuracion/tiendas", element: <TiendasPage /> }] },
+          { element: <PermissionRoute permission="usuarios.ver" />, children: [{ path: "/configuracion/usuarios", element: <UsuariosPage /> }] },
+          { element: <PermissionRoute permission="roles.ver" />, children: [{ path: "/configuracion/roles-permisos", element: <RolesPage /> }] },
+          { element: <PermissionRoute permission="series.ver" />, children: [{ path: "/configuracion/series", element: <SeriesPage /> }] },
           {
             element: <PermissionRoute permission="sunat.configuracion.ver" />,
             children: [{ path: "/configuracion/sunat", element: <SunatConfiguracionPage /> }],

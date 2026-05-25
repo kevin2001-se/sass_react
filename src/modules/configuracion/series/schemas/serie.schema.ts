@@ -1,0 +1,3 @@
+import { z } from "zod"
+export const serieSchema = z.object({ tienda_id: z.number({ error: "Selecciona una tienda" }), tipo_comprobante: z.enum(["NOTA_VENTA", "BOLETA", "FACTURA", "NOTA_CREDITO", "NOTA_DEBITO", "GUIA_REMISION"]), serie: z.string().min(1, "La serie es obligatoria").max(10), correlativo_actual: z.coerce.number().min(0), estado: z.boolean() })
+export type SerieSchemaValues = z.infer<typeof serieSchema>

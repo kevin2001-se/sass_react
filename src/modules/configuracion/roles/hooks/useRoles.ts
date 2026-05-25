@@ -1,0 +1,6 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { roleService } from "@/modules/configuracion/roles/services/role.service"
+import type { RoleFilters, RoleFormValues } from "@/modules/configuracion/roles/types/role.types"
+export function useRoles(filters: RoleFilters = {}) { return useQuery({ queryKey: ["configuracion", "roles", filters], queryFn: () => roleService.list(filters) }) }
+export function usePermisos() { return useQuery({ queryKey: ["configuracion", "permisos"], queryFn: roleService.permissions }) }
+export function useRoleMutations() { const qc = useQueryClient(); return { create: useMutation({ mutationFn: roleService.create, onSuccess: () => qc.invalidateQueries({ queryKey: ["configuracion", "roles"] }) }), update: useMutation({ mutationFn: ({ id, values }: { id: number; values: RoleFormValues }) => roleService.update(id, values), onSuccess: () => qc.invalidateQueries({ queryKey: ["configuracion", "roles"] }) }), remove: useMutation({ mutationFn: roleService.remove, onSuccess: () => qc.invalidateQueries({ queryKey: ["configuracion", "roles"] }) }) } }
