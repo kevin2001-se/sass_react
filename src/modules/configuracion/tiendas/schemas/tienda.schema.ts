@@ -1,0 +1,3 @@
+import { z } from "zod"
+export const tiendaSchema = z.object({ nombre: z.string().min(1, "El nombre es obligatorio"), codigo: z.string().min(1, "El código es obligatorio"), direccion: z.string().optional(), ubigeo: z.string().optional().refine((v) => !v || v.length === 6, "El ubigeo debe tener 6 dígitos"), telefono: z.string().optional(), estado: z.boolean() })
+export type TiendaSchemaValues = z.infer<typeof tiendaSchema>

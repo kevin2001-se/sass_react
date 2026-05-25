@@ -1,0 +1,9 @@
+import { Edit, MoreHorizontal, PowerOff } from "lucide-react"
+import { Button } from "@/shared/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/components/ui/dropdown-menu"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/components/ui/table"
+import { StatusBadge } from "@/modules/configuracion/shared/StatusBadge"
+import type { Tienda } from "@/modules/configuracion/tiendas/types/tienda.types"
+export function TiendasTable({ tiendas, onEdit, onDeactivate }: { tiendas: Tienda[]; onEdit: (t: Tienda) => void; onDeactivate: (t: Tienda) => void }) {
+  return <Table><TableHeader><TableRow><TableHead>Nombre</TableHead><TableHead>Código</TableHead><TableHead>Dirección</TableHead><TableHead>Teléfono</TableHead><TableHead>Estado</TableHead><TableHead className="text-right">Acciones</TableHead></TableRow></TableHeader><TableBody>{tiendas.map((t) => <TableRow key={t.id}><TableCell className="font-medium">{t.nombre}</TableCell><TableCell>{t.codigo}</TableCell><TableCell>{t.direccion}</TableCell><TableCell>{t.telefono}</TableCell><TableCell><StatusBadge active={t.estado} /></TableCell><TableCell className="text-right"><DropdownMenu><DropdownMenuTrigger asChild><Button size="icon" variant="ghost" aria-label="Acciones tienda"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger><DropdownMenuContent align="end"><DropdownMenuItem onClick={() => onEdit(t)}><Edit className="mr-2 h-4 w-4" />Editar</DropdownMenuItem>{t.estado ? <DropdownMenuItem onClick={() => onDeactivate(t)}><PowerOff className="mr-2 h-4 w-4" />Desactivar</DropdownMenuItem> : null}</DropdownMenuContent></DropdownMenu></TableCell></TableRow>)}</TableBody></Table>
+}

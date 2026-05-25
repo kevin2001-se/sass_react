@@ -1,0 +1,3 @@
+export type Tienda = { id: number; nombre: string; codigo?: string | null; direccion?: string | null; ubigeo?: string | null; telefono?: string | null; estado: boolean }
+export type TiendaFormValues = { nombre: string; codigo: string; direccion?: string; ubigeo?: string; telefono?: string; estado: boolean }
+export type TiendaFilters = { q?: string; estado?: string; page?: number; per_page?: number }

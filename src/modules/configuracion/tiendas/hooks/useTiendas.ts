@@ -1,0 +1,5 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { tiendaService } from "@/modules/configuracion/tiendas/services/tienda.service"
+import type { TiendaFilters, TiendaFormValues } from "@/modules/configuracion/tiendas/types/tienda.types"
+export function useTiendas(filters: TiendaFilters) { return useQuery({ queryKey: ["configuracion", "tiendas", filters], queryFn: () => tiendaService.list(filters) }) }
+export function useTiendaMutations() { const qc = useQueryClient(); return { create: useMutation({ mutationFn: tiendaService.create, onSuccess: () => qc.invalidateQueries({ queryKey: ["configuracion", "tiendas"] }) }), update: useMutation({ mutationFn: ({ id, values }: { id: number; values: TiendaFormValues }) => tiendaService.update(id, values), onSuccess: () => qc.invalidateQueries({ queryKey: ["configuracion", "tiendas"] }) }), remove: useMutation({ mutationFn: tiendaService.remove, onSuccess: () => qc.invalidateQueries({ queryKey: ["configuracion", "tiendas"] }) }) } }
