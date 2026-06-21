@@ -1,5 +1,5 @@
 import { api } from "@/shared/services/api"
-import type { InventarioPaginated, Lote, LoteFilters, LotePayload } from "@/modules/inventario/types/inventario.types"
+import type { CargaMasivaResponse, InventarioPaginated, Lote, LoteFilters, LotePayload } from "@/modules/inventario/types/inventario.types"
 
 type ResourceResponse<T> = T | { data: T }
 
@@ -36,6 +36,17 @@ export const loteService = {
     return unwrapResource(data)
   },
 
+  async plantillaCargaMasiva() {
+    const { data } = await api.get("/lotes/carga-masiva/plantilla", { responseType: "blob" })
+    return data as Blob
+  },
+
+  async cargaMasiva(archivo: File) {
+    const formData = new FormData()
+    formData.append("archivo", archivo)
+    const { data } = await api.post<CargaMasivaResponse>("/lotes/carga-masiva", formData, { headers: { "Content-Type": "multipart/form-data" } })
+    return data
+  },
   async deleteLote(id: number) {
     await api.delete(`/lotes/${id}`)
   },

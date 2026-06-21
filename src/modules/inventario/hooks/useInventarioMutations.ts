@@ -71,3 +71,22 @@ export function useDeleteLote() {
     onSuccess: invalidate,
   })
 }
+
+export function useCargaMasivaInventario() {
+  const invalidate = useInvalidateInventario()
+
+  return useMutation({
+    mutationFn: (payload: { tipo: "entrada" | "salida" | "ajuste"; archivo: File; motivo?: string; tipo_ajuste?: "POSITIVO" | "NEGATIVO" }) =>
+      inventarioService.cargaMasiva(payload.tipo, { archivo: payload.archivo, motivo: payload.motivo, tipo_ajuste: payload.tipo_ajuste }),
+    onSuccess: invalidate,
+  })
+}
+
+export function useCargaMasivaLotes() {
+  const invalidate = useInvalidateInventario()
+
+  return useMutation({
+    mutationFn: (archivo: File) => loteService.cargaMasiva(archivo),
+    onSuccess: invalidate,
+  })
+}

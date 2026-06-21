@@ -22,7 +22,11 @@ export function PosRegisterSaleButton({ cajaAbierta }: { cajaAbierta: boolean })
   const lastSale = usePosStore((state) => state.lastSale)
   const items = usePosStore((state) => state.items)
   const puedeCobrar = usePosStore((state) => state.puedeCobrar)
+  const tipoVenta = usePosStore((state) => state.tipoVenta)
+  const pagosCount = usePosStore((state) => state.pagos.length)
   const [successOpen, setSuccessOpen] = useState(false)
+  const cajaRequerida = tipoVenta === "CONTADO" || pagosCount > 0
+  const cajaOk = cajaAbierta || !cajaRequerida
   const submittingRef = useRef(false)
 
 
@@ -57,7 +61,7 @@ export function PosRegisterSaleButton({ cajaAbierta }: { cajaAbierta: boolean })
       const message = firstError || getLaravelErrorMessage(error, "No se pudo registrar la venta.")
 
       if (/stock/i.test(message)) toast.error("Stock insuficiente. Actualiza la busqueda del producto.")
-      else if (/caja/i.test(message)) toast.error("No hay caja abierta. Apertura caja antes de vender.")
+      else if (/caja/i.test(message)) toast.error("No hay caja abierta para registrar el pago inicial.")
       else toast.error(message)
     } finally {
       submittingRef.current = false
@@ -69,8 +73,8 @@ export function PosRegisterSaleButton({ cajaAbierta }: { cajaAbierta: boolean })
       <Button
         ref={registerButtonRef}
         className="h-12 text-base font-semibold"
-        disabled={registrarVenta.isPending || !cajaAbierta || items.length === 0 || !puedeCobrar}
-        title={!cajaAbierta ? "No hay caja abierta" : !puedeCobrar ? "Completa el pago para registrar" : "F10 registrar venta"}
+        disabled={registrarVenta.isPending || !cajaOk || items.length === 0 || !puedeCobrar}
+        title={!cajaOk ? "No hay caja abierta" : !puedeCobrar ? "Completa el pago o selecciona cliente para credito" : "F10 registrar venta"}
         type="button"
         variant="secondary"
         onClick={handleRegister}

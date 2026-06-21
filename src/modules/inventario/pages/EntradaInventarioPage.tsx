@@ -3,9 +3,11 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
+import { CargaMasivaInventarioDialog } from "@/modules/inventario/components/CargaMasivaInventarioDialog"
 import { InventarioMovimientoForm } from "@/modules/inventario/components/InventarioMovimientoForm"
-import { useCreateLote, useEntradaInventario } from "@/modules/inventario/hooks/useInventarioMutations"
+import { useCargaMasivaInventario, useCreateLote, useEntradaInventario } from "@/modules/inventario/hooks/useInventarioMutations"
 import { useLotes } from "@/modules/inventario/hooks/useLotes"
+import { inventarioService } from "@/modules/inventario/services/inventario.service"
 import { loteSchema, type LoteFormValues } from "@/modules/inventario/schemas/inventario.schema"
 import { useProductos } from "@/modules/productos/hooks/useProductos"
 import { Button } from "@/shared/components/ui/button"
@@ -23,7 +25,9 @@ export function EntradaInventarioPage() {
   const lotesQuery = useLotes({ estado: "true", per_page: 100 })
   const entradaMutation = useEntradaInventario()
   const createLoteMutation = useCreateLote()
+  const cargaMasivaMutation = useCargaMasivaInventario()
   const [quickLoteOpen, setQuickLoteOpen] = useState(false)
+  const [cargaMasivaOpen, setCargaMasivaOpen] = useState(false)
   const loteForm = useForm<LoteFormValues>({
     resolver: zodResolver(loteSchema) as never,
     defaultValues: { producto_id: 0, codigo_lote: "", fecha_vencimiento: "", estado: true },
@@ -59,9 +63,12 @@ export function EntradaInventarioPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-normal">Entrada de inventario</h1>
-        <p className="text-sm text-muted-foreground">Suma stock en unidad mínima usando la conversión de presentación.</p>
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-normal">Entrada de inventario</h1>
+          <p className="text-sm text-muted-foreground">Suma stock en unidad mínima usando la conversión de presentación.</p>
+        </div>
+        <Button type="button" variant="outline" onClick={() => setCargaMasivaOpen(true)}>Carga masiva</Button>
       </div>
 
       <Card>
@@ -80,6 +87,17 @@ export function EntradaInventarioPage() {
           />
         </CardContent>
       </Card>
+
+      <CargaMasivaInventarioDialog
+        open={cargaMasivaOpen}
+        onOpenChange={setCargaMasivaOpen}
+        title="Carga masiva de entradas"
+        description="Carga cantidades de entrada desde Excel o CSV. Los lotes inexistentes se crean si el producto los requiere."
+        mode="entrada"
+        isSubmitting={cargaMasivaMutation.isPending}
+        onSubmit={(payload) => cargaMasivaMutation.mutateAsync({ tipo: "entrada", ...payload })}
+        onDownloadTemplate={() => inventarioService.plantillaCargaMasiva("entrada")}
+      />
 
       <Dialog open={quickLoteOpen} onOpenChange={setQuickLoteOpen}>
         <DialogContent>

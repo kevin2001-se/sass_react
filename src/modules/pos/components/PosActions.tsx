@@ -29,10 +29,14 @@ export function PosActions({ cajaAbierta, onSuspendedOpenChange }: PosActionsPro
   const total = usePosStore((state) => state.total)
   const items = usePosStore((state) => state.items)
   const puedeCobrar = usePosStore((state) => state.puedeCobrar)
+  const tipoVenta = usePosStore((state) => state.tipoVenta)
+  const pagosCount = usePosStore((state) => state.pagos.length)
   const clearCart = usePosStore((state) => state.clearCart)
   const validateBeforeRegister = usePosStore((state) => state.validateBeforeRegister)
   const getSuspendedSales = usePosStore((state) => state.getSuspendedSales)
   const hasItems = items.length > 0
+  const cajaRequerida = tipoVenta === "CONTADO" || pagosCount > 0
+  const cajaOk = cajaAbierta || !cajaRequerida
 
   function handleCobrar() {
     const validation = validateBeforeRegister(cajaAbierta)
@@ -54,7 +58,7 @@ export function PosActions({ cajaAbierta, onSuspendedOpenChange }: PosActionsPro
       <PosSaleValidationAlert cajaAbierta={cajaAbierta} />
       <Button
         className="h-12 text-base font-semibold"
-        disabled={!cajaAbierta || !hasItems || total <= 0}
+        disabled={!cajaOk || !hasItems || total <= 0}
         title="F4 cobrar"
         onClick={handleCobrar}
       >

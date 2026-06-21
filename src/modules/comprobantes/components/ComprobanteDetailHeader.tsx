@@ -1,4 +1,5 @@
-import { ReceiptText } from "lucide-react"
+﻿import { ReceiptText } from "lucide-react"
+import { ComprobanteBajaBadge } from "@/modules/comprobantes/components/ComprobanteBajaBadge"
 import { ComprobanteEstadoSunatBadge } from "@/modules/comprobantes/components/ComprobanteEstadoSunatBadge"
 import type { ComprobanteElectronico } from "@/modules/comprobantes/types/comprobante.types"
 import { getComprobanteClienteNombre, getComprobanteTotal } from "@/modules/comprobantes/types/comprobante.types"
@@ -18,6 +19,7 @@ export function ComprobanteDetailHeader({ comprobante }: Props) {
             <h1 className="text-2xl font-semibold tracking-tight">{comprobante.numero_comprobante}</h1>
             <Badge variant="secondary">{comprobante.tipo_comprobante.replaceAll("_", " ")}</Badge>
             <ComprobanteEstadoSunatBadge estado={comprobante.estado_sunat} />
+            <ComprobanteBajaBadge estado={comprobante.estado_baja} />
           </div>
           <p className="text-sm text-muted-foreground">{formatDateTime(comprobante.fecha_emision)} | {getComprobanteClienteNombre(comprobante)}</p>
         </div>
@@ -29,3 +31,4 @@ export function ComprobanteDetailHeader({ comprobante }: Props) {
     </Card>
   )
 }
+

@@ -1,4 +1,4 @@
-﻿import { create } from "zustand"
+import { create } from "zustand"
 
 import type { AddPosItemPayload, PosCartItem, PosCliente, PosDraftSale, PosMetodoPago, PosPago, PosPaymentValidationResult, PosState, PosSuspendedSale, PosTipoComprobante, PosTipoVenta, PosVentaPayload, PosVentaRegistrada } from "@/modules/pos/types/pos.types"
 import { CLIENTE_VARIOS } from "@/modules/pos/types/posCliente.types"
@@ -219,7 +219,7 @@ function validateStockAllocation(items: PosCartItem[], nextItem: PosCartItem): P
   return success()
 }
 function validateBeforeRegisterState(state: PosState, cajaAbierta = true): PosActionResult {
-  if (!cajaAbierta) return fail("No hay caja abierta. Apertura caja antes de vender.")
+  if (!cajaAbierta && (state.tipoVenta === "CONTADO" || state.pagos.length > 0)) return fail("No hay caja abierta. Apertura caja antes de vender o registra el credito sin pago inicial.")
   if (state.items.length === 0) return fail("El carrito no puede estar vacio.")
 
   for (const item of state.items) {

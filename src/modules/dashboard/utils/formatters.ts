@@ -1,8 +1,11 @@
+import { getRuntimeSistemaParametros } from "@/shared/utils/parametroRuntime"
 export function formatCurrency(value?: number | null) {
+  const { moneda_default, decimales_montos } = getRuntimeSistemaParametros()
   return new Intl.NumberFormat("es-PE", {
     style: "currency",
-    currency: "PEN",
-    minimumFractionDigits: 2,
+    currency: moneda_default,
+    minimumFractionDigits: decimales_montos,
+    maximumFractionDigits: decimales_montos,
   }).format(value ?? 0)
 }
 

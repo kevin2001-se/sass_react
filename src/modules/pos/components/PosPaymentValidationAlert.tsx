@@ -1,4 +1,4 @@
-﻿import { AlertTriangle, CheckCircle2 } from "lucide-react"
+import { AlertTriangle, CheckCircle2 } from "lucide-react"
 
 import { usePosStore } from "@/modules/pos/hooks/usePosStore"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
@@ -10,12 +10,12 @@ export function PosPaymentValidationAlert({ cajaAbierta }: { cajaAbierta: boolea
   const tipoVenta = usePosStore((state) => state.tipoVenta)
   const totalPagado = usePosStore((state) => state.totalPagado)
 
-  if (!cajaAbierta) {
+  if (!cajaAbierta && (tipoVenta === "CONTADO" || totalPagado > 0)) {
     return (
       <Alert variant="destructive">
         <AlertTriangle className="h-4 w-4" />
         <AlertTitle>No hay caja abierta</AlertTitle>
-        <AlertDescription>Debes aperturar caja antes de cobrar.</AlertDescription>
+        <AlertDescription>Debes aperturar caja para ventas contado o para registrar un pago inicial.</AlertDescription>
       </Alert>
     )
   }
@@ -39,8 +39,8 @@ export function PosPaymentValidationAlert({ cajaAbierta }: { cajaAbierta: boolea
         <AlertTitle>{tipoVenta === "CREDITO" ? "Credito preparado" : "Pago completo"}</AlertTitle>
         <AlertDescription>
           {tipoVenta === "CREDITO" && totalPagado === 0
-            ? "Venta al credito sin pago inicial, lista para registrarse en una fase posterior."
-            : "Pago completo. Listo para registrar venta."}
+            ? "Venta al credito sin pago inicial. Se registrara una cuenta por cobrar y no movera caja."
+            : tipoVenta === "CREDITO" ? "Pago inicial registrado. Se generara cuenta por cobrar por el saldo." : "Pago completo. Listo para registrar venta."}
         </AlertDescription>
       </Alert>
     )

@@ -1,5 +1,6 @@
 export type EstadoSunat = "PENDIENTE" | "ENVIADO" | "ACEPTADO" | "RECHAZADO" | "ERROR" | "DADO_DE_BAJA" | "NO_APLICA"
 export type TipoComprobanteElectronico = "BOLETA" | "FACTURA" | "NOTA_CREDITO" | "NOTA_DEBITO" | "GUIA_REMISION"
+export type EstadoBajaComprobante = "SIN_BAJA" | "PENDIENTE_BAJA" | "EN_BAJA" | "BAJA_ACEPTADA" | "BAJA_RECHAZADA"
 
 export type ComprobanteCliente = {
   id?: number | null
@@ -42,6 +43,16 @@ export type ComprobanteVenta = {
   notas_debito?: unknown[]
 }
 
+export type ComprobanteBajaHistorial = {
+  id: number
+  comprobante_id: number
+  estado_anterior: string
+  estado_nuevo: string
+  motivo: string
+  usuario?: { id: number; name?: string | null } | null
+  created_at?: string | null
+}
+
 export type ComprobanteElectronico = {
   id: number
   venta_id?: number | null
@@ -54,6 +65,11 @@ export type ComprobanteElectronico = {
   fecha_emision: string
   moneda?: string
   estado_sunat: EstadoSunat | string
+  estado_baja?: EstadoBajaComprobante | string | null
+  motivo_baja?: string | null
+  fecha_solicitud_baja?: string | null
+  solicitado_baja_por?: { id: number; name?: string | null } | null
+  baja_historial?: ComprobanteBajaHistorial[]
   codigo_respuesta?: string | null
   mensaje_respuesta?: string | null
   hash?: string | null
@@ -110,6 +126,11 @@ export type ResumenDiario = {
   fecha_resumen: string
   fecha_envio: string
   estado_sunat: EstadoSunat | string
+  estado_baja?: EstadoBajaComprobante | string | null
+  motivo_baja?: string | null
+  fecha_solicitud_baja?: string | null
+  solicitado_baja_por?: { id: number; name?: string | null } | null
+  baja_historial?: ComprobanteBajaHistorial[]
   ticket?: string | null
   codigo_respuesta?: string | null
   mensaje_respuesta?: string | null
@@ -124,6 +145,11 @@ export type ComunicacionBaja = {
   fecha_baja: string
   fecha_envio: string
   estado_sunat: EstadoSunat | string
+  estado_baja?: EstadoBajaComprobante | string | null
+  motivo_baja?: string | null
+  fecha_solicitud_baja?: string | null
+  solicitado_baja_por?: { id: number; name?: string | null } | null
+  baja_historial?: ComprobanteBajaHistorial[]
   ticket?: string | null
   codigo_respuesta?: string | null
   mensaje_respuesta?: string | null

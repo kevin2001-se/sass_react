@@ -1,9 +1,13 @@
+import { getRuntimeSistemaParametros } from "@/shared/utils/parametroRuntime"
 import type { CajaMetodoPago, CajaTipoMovimiento } from "@/modules/caja/types/caja.types"
 
 export function formatCurrency(value?: number | string | null) {
+  const { moneda_default, decimales_montos } = getRuntimeSistemaParametros()
   return new Intl.NumberFormat("es-PE", {
     style: "currency",
-    currency: "PEN",
+    currency: moneda_default,
+    minimumFractionDigits: decimales_montos,
+    maximumFractionDigits: decimales_montos,
   }).format(Number(value ?? 0))
 }
 

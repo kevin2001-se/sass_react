@@ -97,6 +97,9 @@ export type PosSaleResponse = {
   tipo_comprobante: PosTipoComprobante
   tipo_venta: PosTipoVenta
   total: number
+  monto_pagado?: number | string | null
+  saldo_pendiente?: number | string | null
+  cuenta_por_cobrar?: { id: number; monto_total?: number | string; monto_pagado?: number | string; saldo?: number | string; saldo_pendiente?: number | string; estado?: string } | null
   estado: string
   comprobante_electronico?: PosComprobanteElectronico | null
 }

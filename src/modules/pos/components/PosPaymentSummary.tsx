@@ -1,4 +1,4 @@
-﻿import { CheckCircle2, CircleAlert } from "lucide-react"
+import { CheckCircle2, CircleAlert } from "lucide-react"
 
 import { formatCurrency } from "@/modules/caja/components/cajaFormatters"
 import { usePosStore } from "@/modules/pos/hooks/usePosStore"
@@ -20,11 +20,11 @@ export function PosPaymentSummary() {
         <span className="font-semibold">{formatCurrency(total)}</span>
       </div>
       <div className="flex items-center justify-between">
-        <span className="text-muted-foreground">Pagado</span>
+        <span className="text-muted-foreground">{tipoVenta === "CREDITO" ? "Pago inicial" : "Pagado"}</span>
         <span className="font-semibold">{formatCurrency(totalPagado)}</span>
       </div>
       <div className="flex items-center justify-between">
-        <span className="text-muted-foreground">Pendiente</span>
+        <span className="text-muted-foreground">{tipoVenta === "CREDITO" ? "Saldo pendiente" : "Pendiente"}</span>
         <span className="font-semibold">{formatCurrency(saldoPendiente)}</span>
       </div>
       {vuelto > 0 && (

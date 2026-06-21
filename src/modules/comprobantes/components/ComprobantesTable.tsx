@@ -1,6 +1,7 @@
-import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table"
+﻿import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table"
 
 import { ComprobanteActions } from "@/modules/comprobantes/components/ComprobanteActions"
+import { ComprobanteBajaBadge } from "@/modules/comprobantes/components/ComprobanteBajaBadge"
 import { ComprobanteDocumentActions } from "@/modules/comprobantes/components/ComprobanteDocumentActions"
 import { ComprobanteEstadoSunatBadge } from "@/modules/comprobantes/components/ComprobanteEstadoSunatBadge"
 import type { ComprobanteElectronico } from "@/modules/comprobantes/types/comprobante.types"
@@ -24,7 +25,7 @@ export function ComprobantesTable({ comprobantes, isLoading, onNotaCredito, onNo
     { header: "Numero", cell: ({ row }) => <span className="font-medium">{row.original.numero_comprobante}</span> },
     { header: "Cliente", cell: ({ row }) => getComprobanteClienteNombre(row.original) },
     { header: "Total", cell: ({ row }) => <span className="font-semibold">{formatCurrency(getComprobanteTotal(row.original))}</span> },
-    { header: "SUNAT", cell: ({ row }) => <ComprobanteEstadoSunatBadge estado={row.original.estado_sunat} /> },
+    { header: "SUNAT", cell: ({ row }) => <div className="flex flex-wrap gap-1"><ComprobanteEstadoSunatBadge estado={row.original.estado_sunat} /><ComprobanteBajaBadge estado={row.original.estado_baja} /></div> },
     { header: "Codigo", cell: ({ row }) => row.original.codigo_respuesta ?? "-" },
     { header: "Mensaje", cell: ({ row }) => <span className="line-clamp-2 max-w-[220px] text-xs text-muted-foreground">{row.original.mensaje_respuesta ?? "-"}</span> },
     { header: "Intentos", cell: ({ row }) => row.original.intentos_envio ?? 0 },
@@ -54,4 +55,6 @@ export function ComprobantesTable({ comprobantes, isLoading, onNotaCredito, onNo
 function TableSkeleton() {
   return <div className="space-y-3 rounded-md border bg-background p-4">{Array.from({ length: 8 }).map((_, index) => <Skeleton className="h-12 w-full" key={index} />)}</div>
 }
+
+
 

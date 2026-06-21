@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react"
 
 import { LotesTable } from "@/modules/inventario/components/LotesTable"
+import { useParametro } from "@/modules/configuracion/parametros/hooks/useParametros"
 import { useLotes } from "@/modules/inventario/hooks/useLotes"
 import type { Lote } from "@/modules/inventario/types/inventario.types"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
@@ -15,15 +16,16 @@ function isVencido(lote: Lote) {
   return new Date(`${lote.fecha_vencimiento}T00:00:00`) < new Date()
 }
 
-function isPorVencer(lote: Lote) {
+function isPorVencer(lote: Lote, diasAlerta: number) {
   if (!lote.fecha_vencimiento || isVencido(lote)) return false
   const diff = new Date(`${lote.fecha_vencimiento}T00:00:00`).getTime() - new Date().getTime()
-  return Math.ceil(diff / (1000 * 60 * 60 * 24)) <= 30
+  return Math.ceil(diff / (1000 * 60 * 60 * 24)) <= diasAlerta
 }
 
 export function VencimientosPage() {
   const [fechaInicio, setFechaInicio] = useState("")
   const [fechaFin, setFechaFin] = useState("")
+  const diasAlerta = Number(useParametro<number>("dias_alerta_vencimiento", 30).value || 30)
   const lotesQuery = useLotes({ estado: "true", per_page: 100 })
   const lotes = lotesQuery.data?.data ?? []
   const filtered = useMemo(() => {
@@ -34,13 +36,13 @@ export function VencimientosPage() {
     })
   }, [lotes, fechaInicio, fechaFin])
   const vencidos = filtered.filter(isVencido)
-  const porVencer = filtered.filter(isPorVencer)
+  const porVencer = filtered.filter((lote) => isPorVencer(lote, diasAlerta))
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-normal">Vencimientos</h1>
-        <p className="text-sm text-muted-foreground">Controla lotes vencidos y próximos a vencer.</p>
+        <p className="text-sm text-muted-foreground">Controla lotes vencidos y proximos a vencer. Alertas configuradas a {diasAlerta} dias.</p>
       </div>
 
       <Card>

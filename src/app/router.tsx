@@ -17,7 +17,8 @@ import { PrincipiosActivosPage } from "@/modules/catalogos/pages/PrincipiosActiv
 import { UnidadesMedidaPage } from "@/modules/catalogos/pages/UnidadesMedidaPage"
 import { BoletasPage } from "@/modules/comprobantes/pages/BoletasPage"
 import { ComprobanteDetailPage } from "@/modules/comprobantes/pages/ComprobanteDetailPage"
-import { ComunicacionBajaPage } from "@/modules/comprobantes/pages/ComunicacionBajaPage"
+import { ComunicacionBajaPage } from "@/modules/comprobantes/comunicacion-baja/pages/ComunicacionBajaPage"
+import { ComunicacionBajaDetailPage } from "@/modules/comprobantes/comunicacion-baja/pages/ComunicacionBajaDetailPage"
 import { FacturasPage } from "@/modules/comprobantes/pages/FacturasPage"
 import { GuiasRemisionPage } from "@/modules/comprobantes/pages/GuiasRemisionPage"
 import { GuiaRemisionDetailPage } from "@/modules/comprobantes/guias-remision/pages/GuiaRemisionDetailPage"
@@ -30,11 +31,13 @@ import { NotasDebitoPage } from "@/modules/comprobantes/pages/NotasDebitoPage"
 import { NotaDebitoDetailPage } from "@/modules/comprobantes/notas-debito/pages/NotaDebitoDetailPage"
 import { NotaDebitoCreatePage } from "@/modules/comprobantes/notas-debito/pages/NotaDebitoCreatePage"
 import { NotasVentaPage } from "@/modules/comprobantes/pages/NotasVentaPage"
-import { ResumenDiarioPage } from "@/modules/comprobantes/pages/ResumenDiarioPage"
+import { ResumenDiarioPage } from "@/modules/comprobantes/resumen-diario/pages/ResumenDiarioPage"
+import { ResumenDiarioDetailPage } from "@/modules/comprobantes/resumen-diario/pages/ResumenDiarioDetailPage"
 import { DashboardPage } from "@/modules/dashboard/pages/DashboardPage"
 import { EmpresaPage } from "@/modules/configuracion/empresa/pages/EmpresaPage"
 import { RolesPage } from "@/modules/configuracion/roles/pages/RolesPage"
 import { SeriesPage } from "@/modules/configuracion/series/pages/SeriesPage"
+import { ParametrosPage } from "@/modules/configuracion/parametros/pages/ParametrosPage"
 import { SunatConfiguracionPage } from "@/modules/configuracion/sunat/pages/SunatConfiguracionPage"
 import { TiendasPage } from "@/modules/configuracion/tiendas/pages/TiendasPage"
 import { UsuariosPage } from "@/modules/configuracion/usuarios/pages/UsuariosPage"
@@ -53,7 +56,21 @@ import { PosPage } from "@/modules/pos/pages/PosPage"
 import { CompraCreatePage } from "@/modules/compras/compras/pages/CompraCreatePage"
 import { CompraDetailPage } from "@/modules/compras/compras/pages/CompraDetailPage"
 import { ComprasHistorialPage } from "@/modules/compras/compras/pages/ComprasHistorialPage"
+import { CuentasPagarPage } from "@/modules/compras/cuentas-pagar/pages/CuentasPagarPage"
+import { CuentaPagarDetailPage } from "@/modules/compras/cuentas-pagar/pages/CuentaPagarDetailPage"
+import { PagoProveedorCreatePage } from "@/modules/compras/pagos-proveedor/pages/PagoProveedorCreatePage"
+import { PagoProveedorDetailPage } from "@/modules/compras/pagos-proveedor/pages/PagoProveedorDetailPage"
+import { PagosProveedorPage } from "@/modules/compras/pagos-proveedor/pages/PagosProveedorPage"
 import { ProveedoresPage } from "@/modules/compras/proveedores/pages/ProveedoresPage"
+import { CuentasCobrarPage } from "@/modules/ventas/cuentas-cobrar/pages/CuentasCobrarPage"
+import { CuentaCobrarDetailPage } from "@/modules/ventas/cuentas-cobrar/pages/CuentaCobrarDetailPage"
+import { PagosClientePage } from "@/modules/ventas/cuentas-cobrar/pages/PagosClientePage"
+import { ReporteCajaPage } from "@/modules/reportes/pages/ReporteCajaPage"
+import { ReporteComprasPage } from "@/modules/reportes/pages/ReporteComprasPage"
+import { ReporteFinancieroPage } from "@/modules/reportes/pages/ReporteFinancieroPage"
+import { ReporteInventarioPage } from "@/modules/reportes/pages/ReporteInventarioPage"
+import { ReporteVentasPage } from "@/modules/reportes/pages/ReporteVentasPage"
+import { ReportesPage } from "@/modules/reportes/pages/ReportesPage"
 import { VentaDetailPage } from "@/modules/ventas/pages/VentaDetailPage"
 import { VentasHistorialPage } from "@/modules/ventas/pages/VentasHistorialPage"
 import { PlaceholderPage } from "@/shared/components/layout/PlaceholderPage"
@@ -161,6 +178,9 @@ export const router = createBrowserRouter([
             children: [
               { path: "/ventas", element: <Navigate to="/ventas/historial" replace /> },
               { path: "/ventas/historial", element: <VentasHistorialPage /> },
+              { path: "/ventas/cuentas-por-cobrar", element: <CuentasCobrarPage /> },
+              { path: "/ventas/cuentas-por-cobrar/:id", element: <CuentaCobrarDetailPage /> },
+              { path: "/ventas/pagos-clientes", element: <PagosClientePage /> },
               { path: "/ventas/devoluciones", element: <PlaceholderPage title="Devoluciones / anulaciones" /> },
               { path: "/ventas/:id", element: <VentaDetailPage /> },
             ],
@@ -211,12 +231,18 @@ export const router = createBrowserRouter([
             ],
           },
           {
-            element: <PermissionRoute permission="sunat.resumenes.ver" />,
-            children: [{ path: "/comprobantes/resumen-diario", element: <ResumenDiarioPage /> }],
+            element: <PermissionRoute permissions={["sunat.resumenes.ver", "resumenes_diarios.ver"]} />,
+            children: [
+              { path: "/comprobantes/resumen-diario", element: <ResumenDiarioPage /> },
+              { path: "/comprobantes/resumen-diario/:id", element: <ResumenDiarioDetailPage /> },
+            ],
           },
           {
-            element: <PermissionRoute permission="sunat.bajas.ver" />,
-            children: [{ path: "/comprobantes/comunicacion-baja", element: <ComunicacionBajaPage /> }],
+            element: <PermissionRoute permissions={["sunat.bajas.ver", "comunicaciones_baja.ver"]} />,
+            children: [
+              { path: "/comprobantes/comunicacion-baja", element: <ComunicacionBajaPage /> },
+              { path: "/comprobantes/comunicacion-baja/:id", element: <ComunicacionBajaDetailPage /> },
+            ],
           },
 
           {
@@ -238,8 +264,26 @@ export const router = createBrowserRouter([
               { path: "/compras/registrar", element: <CompraCreatePage /> },
               { path: "/compras/historial", element: <ComprasHistorialPage /> },
               { path: "/compras/:id", element: <CompraDetailPage /> },
-              { path: "/compras/cuentas-por-pagar", element: <PlaceholderPage title="Cuentas por pagar" /> },
-              { path: "/compras/pagos-proveedor", element: <PlaceholderPage title="Pagos proveedor" /> },
+            ],
+          },
+          {
+            element: <PermissionRoute permission="pagos_proveedor.ver" />,
+            children: [
+              { path: "/compras/pagos-proveedor", element: <PagosProveedorPage /> },
+              { path: "/compras/pagos-proveedor/:id", element: <PagoProveedorDetailPage /> },
+            ],
+          },
+          {
+            element: <PermissionRoute permissions={["compras.ver", "cuentas_pagar.ver"]} />,
+            children: [
+              { path: "/compras/cuentas-por-pagar", element: <CuentasPagarPage /> },
+              { path: "/compras/cuentas-por-pagar/:id", element: <CuentaPagarDetailPage /> },
+            ],
+          },
+          {
+            element: <PermissionRoute permission="pagos_proveedor.crear" />,
+            children: [
+              { path: "/compras/cuentas-por-pagar/:id/pagar", element: <PagoProveedorCreatePage /> },
             ],
           },
           {
@@ -249,12 +293,12 @@ export const router = createBrowserRouter([
           {
             element: <PermissionRoute permission="reportes.ver" />,
             children: [
-              { path: "/reportes", element: <PlaceholderPage title="Reportes" /> },
-              { path: "/reportes/ventas", element: <PlaceholderPage title="Reporte de ventas" /> },
-              { path: "/reportes/compras", element: <PlaceholderPage title="Reporte de compras" /> },
-              { path: "/reportes/inventario", element: <PlaceholderPage title="Reporte de inventario" /> },
-              { path: "/reportes/caja", element: <PlaceholderPage title="Reporte de caja" /> },
-              { path: "/reportes/financiero", element: <PlaceholderPage title="Reporte financiero" /> },
+              { path: "/reportes", element: <ReportesPage /> },
+              { path: "/reportes/ventas", element: <ReporteVentasPage /> },
+              { path: "/reportes/compras", element: <ReporteComprasPage /> },
+              { path: "/reportes/inventario", element: <ReporteInventarioPage /> },
+              { path: "/reportes/caja", element: <ReporteCajaPage /> },
+              { path: "/reportes/financiero", element: <ReporteFinancieroPage /> },
             ],
           },
 
@@ -268,13 +312,15 @@ export const router = createBrowserRouter([
             element: <PermissionRoute permission="sunat.configuracion.ver" />,
             children: [{ path: "/configuracion/sunat", element: <SunatConfiguracionPage /> }],
           },
-          { path: "/configuracion/parametros", element: <PlaceholderPage title="Parametros" /> },
+          { element: <PermissionRoute permission="parametros.ver" />, children: [{ path: "/configuracion/parametros", element: <ParametrosPage /> }] },
         ],
       },
     ],
   },
   { path: "*", element: <Navigate to="/dashboard" replace /> },
 ])
+
+
 
 
 

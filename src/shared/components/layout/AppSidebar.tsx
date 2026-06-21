@@ -92,6 +92,8 @@ const sidebarGroups: SidebarNavGroup[] = [
     children: [
       { label: "POS", path: "/ventas/pos", permission: "ventas.crear" },
       { label: "Historial de ventas", path: "/ventas/historial", icon: History, permission: "ventas.ver" },
+      { label: "Cuentas por cobrar", path: "/ventas/cuentas-por-cobrar", permission: "ventas.ver" },
+      { label: "Pagos de clientes", path: "/ventas/pagos-clientes", permission: "ventas.ver" },
       { label: "Devoluciones / anulaciones", path: "/ventas/devoluciones", permission: "ventas.ver" },
     ],
   },
@@ -116,8 +118,8 @@ const sidebarGroups: SidebarNavGroup[] = [
       { label: "Nueva nota debito", path: "/comprobantes/notas-debito/nueva", permission: ["sunat.notas.crear", "notas_debito.crear"] },
       { label: "Guias de remision", path: "/comprobantes/guias-remision", icon: SendToBack, permission: "sunat.guias.ver" },
       { label: "Nueva desde venta", path: "/comprobantes/guias-remision/desde-venta", permission: "sunat.guias.ver" },
-      { label: "Resumen diario", path: "/comprobantes/resumen-diario", icon: ClipboardList, permission: "sunat.resumenes.ver" },
-      { label: "Comunicacion de baja", path: "/comprobantes/comunicacion-baja", icon: LogOut, permission: "sunat.bajas.ver" },
+      { label: "Resumen diario", path: "/comprobantes/resumen-diario", icon: ClipboardList, permission: ["sunat.resumenes.ver", "resumenes_diarios.ver"] },
+      { label: "Comunicacion de baja", path: "/comprobantes/comunicacion-baja", icon: LogOut, permission: ["sunat.bajas.ver", "comunicaciones_baja.ver"] },
     ],
   },
   {
@@ -127,8 +129,8 @@ const sidebarGroups: SidebarNavGroup[] = [
       { label: "Proveedores", path: "/compras/proveedores", permission: "proveedores.ver" },
       { label: "Registrar compra", path: "/compras/registrar", permission: "compras.crear" },
       { label: "Historial compras", path: "/compras/historial", permission: "compras.ver" },
-      { label: "Cuentas por pagar", path: "/compras/cuentas-por-pagar", permission: "compras.ver" },
-      { label: "Pagos proveedor", path: "/compras/pagos-proveedor", permission: "compras.ver" },
+      { label: "Cuentas por pagar", path: "/compras/cuentas-por-pagar", permission: ["compras.ver", "cuentas_pagar.ver"] },
+      { label: "Pagos proveedor", path: "/compras/pagos-proveedor", permission: ["pagos_proveedor.ver", "pagos_proveedor.crear"] },
     ],
   },
   {
@@ -152,7 +154,7 @@ const sidebarGroups: SidebarNavGroup[] = [
       { label: "Roles y permisos", path: "/configuracion/roles-permisos", permission: "roles.ver" },
       { label: "Series", path: "/configuracion/series", permission: "series.ver" },
       { label: "SUNAT", path: "/configuracion/sunat", icon: Sun, permission: "sunat.configuracion.ver" },
-      { label: "Parametros", path: "/configuracion/parametros" },
+      { label: "Parametros", path: "/configuracion/parametros", permission: "parametros.ver" },
     ],
   },
 ]
@@ -318,5 +320,7 @@ export function AppSidebar() {
     </Sidebar>
   )
 }
+
+
 
 

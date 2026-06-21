@@ -1,5 +1,5 @@
 import { FileText, Printer, RotateCcw, Search } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import { toast } from "sonner"
 
@@ -7,6 +7,7 @@ import { formatCurrency } from "@/modules/caja/components/cajaFormatters"
 import { PosDocumentActions } from "@/modules/pos/components/PosDocumentActions"
 import { PosSunatStatusBadge } from "@/modules/pos/components/PosSunatStatusBadge"
 import { posDocumentoService } from "@/modules/pos/services/posDocumento.service"
+import { useParametro } from "@/modules/configuracion/parametros/hooks/useParametros"
 import type { PosComprobanteElectronico, PosVentaRegistrada } from "@/modules/pos/types/pos.types"
 import { openBlob, openPrintableBlob } from "@/modules/pos/utils/downloadBlob"
 import { Badge } from "@/shared/components/ui/badge"
@@ -28,10 +29,18 @@ export function PosSaleSuccessModal({
   const [comprobante, setComprobante] = useState<PosComprobanteElectronico | null>(sale?.comprobante_electronico ?? null)
   const [printing, setPrinting] = useState(false)
   const [openingPdf, setOpeningPdf] = useState(false)
+  const printedSaleRef = useRef<number | null>(null)
+  const imprimirAutomatico = useParametro<boolean>("imprimir_ticket_automatico", true)
 
   useEffect(() => {
     setComprobante(sale?.comprobante_electronico ?? null)
   }, [sale])
+
+  useEffect(() => {
+    if (!open || !sale || !imprimirAutomatico.value || printedSaleRef.current === sale.id) return
+    printedSaleRef.current = sale.id
+    void handleTicket()
+  }, [open, sale, imprimirAutomatico.value])
 
   if (!sale) return null
   const currentSale = sale
@@ -83,14 +92,24 @@ export function PosSaleSuccessModal({
           <div className="grid gap-2 text-sm sm:grid-cols-2">
             <Info label="Venta ID" value={`#${sale.id}`} />
             <Info label="Total" value={formatCurrency(Number(sale.total))} strong />
+            {sale.tipo_venta === "CREDITO" && <Info label="Pago inicial" value={formatCurrency(Number(sale.monto_pagado ?? sale.cuenta_por_cobrar?.monto_pagado ?? 0))} />}
+            {sale.tipo_venta === "CREDITO" && <Info label="Saldo pendiente" value={formatCurrency(Number(sale.saldo_pendiente ?? sale.cuenta_por_cobrar?.saldo_pendiente ?? sale.cuenta_por_cobrar?.saldo ?? 0))} strong />}
             {comprobante?.codigo_respuesta && <Info label="Codigo SUNAT" value={comprobante.codigo_respuesta} />}
             {comprobante?.mensaje_respuesta && <Info label="Mensaje SUNAT" value={comprobante.mensaje_respuesta} />}
           </div>
+
+          {sale.tipo_venta === "CREDITO" ? (
+            <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+              <p className="font-medium">Cuenta por cobrar generada</p>
+              <p>La deuda queda disponible en Ventas / Cuentas por cobrar.</p>
+            </div>
+          ) : null}
 
           <Separator />
 
           <div className="rounded-md border border-dashed p-3 text-sm">
             <p className="font-medium">Formatos internos</p>
+            {!imprimirAutomatico.value ? <p className="text-xs text-muted-foreground">Impresion automatica desactivada por parametros. Usa el boton manual.</p> : null}
             <p className="text-muted-foreground">Ticket y PDF se generan desde la venta registrada. SUNAT solo se usa para envio, XML/CDR y estado.</p>
             <div className="mt-3 flex flex-wrap gap-2">
               <Button disabled={printing} type="button" onClick={handleTicket}>

@@ -1,5 +1,5 @@
-﻿import { api } from "@/shared/services/api"
-import type { ComprobanteElectronico, ComprobanteFilters, PaginatedResponse } from "@/modules/comprobantes/types/comprobante.types"
+import { api } from "@/shared/services/api"
+import type { ComprobanteBajaHistorial, ComprobanteElectronico, ComprobanteFilters, PaginatedResponse } from "@/modules/comprobantes/types/comprobante.types"
 import { ventaService } from "@/modules/ventas/services/venta.service"
 import type { Venta } from "@/modules/ventas/types/venta.types"
 
@@ -18,6 +18,7 @@ function ventaPendienteToComprobante(venta: Venta): ComprobanteElectronico {
     fecha_emision: venta.fecha_emision,
     moneda: "PEN",
     estado_sunat: "PENDIENTE",
+    estado_baja: "SIN_BAJA",
     codigo_respuesta: null,
     mensaje_respuesta: "Pendiente de emision SUNAT",
     intentos_envio: 0,
@@ -96,6 +97,13 @@ export const comprobanteService = {
   async reenviar(id: number) {
     const { data } = await api.post<{ data: ComprobanteElectronico } | ComprobanteElectronico>(`/sunat/comprobantes/${id}/reenviar`)
     return "data" in data ? data.data : data
+  },  async solicitarBaja(id: number, payload: { motivo_baja: string }) {
+    const { data } = await api.post<{ data: ComprobanteElectronico } | ComprobanteElectronico>(`/sunat/comprobantes/${id}/solicitar-baja`, payload)
+    return "data" in data ? data.data : data
+  },
+  async getHistorialBaja(id: number) {
+    const { data } = await api.get<{ data: ComprobanteBajaHistorial[] } | ComprobanteBajaHistorial[]>(`/sunat/comprobantes/${id}/historial-baja`)
+    return Array.isArray(data) ? data : data.data
   },
   async descargarPdfA4(id: number) {
     const { data } = await api.get<Blob>(`/sunat/documentos/${id}/pdf-a4`, { responseType: "blob" })

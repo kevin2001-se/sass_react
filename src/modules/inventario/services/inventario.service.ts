@@ -1,5 +1,6 @@
 import { api } from "@/shared/services/api"
 import type {
+  CargaMasivaResponse,
   InventarioAjustePayload,
   InventarioEntradaPayload,
   InventarioMovimiento,
@@ -61,6 +62,20 @@ export const inventarioService = {
   async ajuste(payload: InventarioAjustePayload) {
     const { data } = await api.post<ResourceResponse<InventarioMovimiento>>("/inventario/ajuste", payload)
     return unwrapResource(data)
+  },
+
+  async plantillaCargaMasiva(tipo: "entrada" | "salida" | "ajuste") {
+    const { data } = await api.get(`/inventario/${tipo}/carga-masiva/plantilla`, { responseType: "blob" })
+    return data as Blob
+  },
+
+  async cargaMasiva(tipo: "entrada" | "salida" | "ajuste", payload: { archivo: File; motivo?: string; tipo_ajuste?: "POSITIVO" | "NEGATIVO" }) {
+    const formData = new FormData()
+    formData.append("archivo", payload.archivo)
+    if (payload.motivo) formData.append("motivo", payload.motivo)
+    if (payload.tipo_ajuste) formData.append("tipo_ajuste", payload.tipo_ajuste)
+    const { data } = await api.post<CargaMasivaResponse>(`/inventario/${tipo}/carga-masiva`, formData, { headers: { "Content-Type": "multipart/form-data" } })
+    return data
   },
 
   async getKardex(productoId: number, filters: MovimientoFilters = {}) {

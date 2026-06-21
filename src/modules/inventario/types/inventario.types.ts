@@ -106,3 +106,26 @@ export type MovimientoFilters = {
 }
 
 export type InventarioPaginated<T> = PaginatedResponse<T>
+
+export type CargaMasivaError = {
+  fila: number
+  errores?: Record<string, string[]>
+  motivo?: string
+}
+
+export type CargaMasivaProcesada = Record<string, unknown> & { fila: number }
+
+export type CargaMasivaResultado = {
+  procesadas: CargaMasivaProcesada[]
+  omitidas: CargaMasivaError[]
+  errores: CargaMasivaError[]
+  total_procesadas: number
+  total_omitidas: number
+  total_errores: number
+}
+
+export type CargaMasivaResponse = {
+  success: boolean
+  message: string
+  data: CargaMasivaResultado
+}

@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQuery } from "@tanstack/react-query"
 import { Loader2, PackagePlus, Save } from "lucide-react"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
 import { AppCombobox } from "@/shared/components/forms/AppCombobox"
@@ -18,6 +18,7 @@ import { CompraDetallesTable } from "@/modules/compras/compras/components/Compra
 import { CompraProductoModal } from "@/modules/compras/compras/components/CompraProductoModal"
 import { CompraTotalesCard } from "@/modules/compras/compras/components/CompraTotalesCard"
 import { compraSchema } from "@/modules/compras/compras/schemas/compra.schema"
+import { useParametro } from "@/modules/configuracion/parametros/hooks/useParametros"
 import type { CompraFormValues, CompraPayload } from "@/modules/compras/compras/types/compra.types"
 import type { Producto } from "@/modules/productos/types/producto.types"
 
@@ -71,8 +72,15 @@ function duplicateKey(values: CompraFormValues, productos: Producto[]) {
 
 export function CompraForm({ loading, serverErrors, onSubmit }: CompraFormProps) {
   const [productModalOpen, setProductModalOpen] = useState(false)
+  const monedaDefault = useParametro<string>("moneda_default", "PEN")
   const form = useForm<CompraFormValues>({ resolver: zodResolver(compraSchema) as any, defaultValues })
   const detalles = useWatch({ control: form.control, name: "detalles" }) ?? []
+
+  useEffect(() => {
+    if ((monedaDefault.value === "PEN" || monedaDefault.value === "USD") && !form.formState.dirtyFields.moneda) {
+      form.setValue("moneda", monedaDefault.value as CompraFormValues["moneda"])
+    }
+  }, [form, monedaDefault.value])
 
   const proveedoresQuery = useQuery({ queryKey: ["compras", "proveedores", "select"], queryFn: () => proveedorService.list({ estado: "1", per_page: 100 }) })
   const productosQuery = useQuery({ queryKey: ["productos", "compras", "select"], queryFn: () => productoService.getProductos({ estado: "1", per_page: 100 }) })

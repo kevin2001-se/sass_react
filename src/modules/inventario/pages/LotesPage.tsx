@@ -1,12 +1,14 @@
-﻿import { zodResolver } from "@hookform/resolvers/zod"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
+import { CargaMasivaInventarioDialog } from "@/modules/inventario/components/CargaMasivaInventarioDialog"
 import { InventarioFilters } from "@/modules/inventario/components/InventarioFilters"
 import { LotesTable } from "@/modules/inventario/components/LotesTable"
-import { useCreateLote, useDeleteLote, useUpdateLote } from "@/modules/inventario/hooks/useInventarioMutations"
+import { useCargaMasivaLotes, useCreateLote, useDeleteLote, useUpdateLote } from "@/modules/inventario/hooks/useInventarioMutations"
 import { useLotes } from "@/modules/inventario/hooks/useLotes"
+import { loteService } from "@/modules/inventario/services/lote.service"
 import { loteSchema, type LoteFormValues } from "@/modules/inventario/schemas/inventario.schema"
 import type { Lote } from "@/modules/inventario/types/inventario.types"
 import { useProductos } from "@/modules/productos/hooks/useProductos"
@@ -26,12 +28,14 @@ export function LotesPage() {
   const [estado, setEstado] = useState("")
   const [productoId, setProductoId] = useState("")
   const [open, setOpen] = useState(false)
+  const [cargaMasivaOpen, setCargaMasivaOpen] = useState(false)
   const [editing, setEditing] = useState<Lote | null>(null)
   const lotesQuery = useLotes({ buscar, estado, producto_id: productoId, per_page: 100 })
   const productosQuery = useProductos({ per_page: 100, estado: "true" })
   const createMutation = useCreateLote()
   const updateMutation = useUpdateLote(editing?.id ?? 0)
   const deleteMutation = useDeleteLote()
+  const cargaMasivaMutation = useCargaMasivaLotes()
 
   const form = useForm<LoteFormValues>({
     resolver: zodResolver(loteSchema) as never,
@@ -95,7 +99,10 @@ export function LotesPage() {
           <h1 className="text-2xl font-semibold tracking-normal">Lotes</h1>
           <p className="text-sm text-muted-foreground">Administra lotes por empresa y producto. El stock del lote se controla por tienda en Inventario.</p>
         </div>
-        <Button onClick={openCreate}>Nuevo lote</Button>
+        <div className="flex gap-2">
+          <Button type="button" variant="outline" onClick={() => setCargaMasivaOpen(true)}>Carga masiva</Button>
+          <Button onClick={openCreate}>Nuevo lote</Button>
+        </div>
       </div>
 
       <Card>
@@ -129,6 +136,17 @@ export function LotesPage() {
         lotes={lotesQuery.data?.data ?? []}
         onDelete={onDelete}
         onEdit={openEdit}
+      />
+
+      <CargaMasivaInventarioDialog
+        open={cargaMasivaOpen}
+        onOpenChange={setCargaMasivaOpen}
+        title="Carga masiva de lotes"
+        description="Crea lotes desde Excel o CSV. Esta carga no modifica stock."
+        mode="lotes"
+        isSubmitting={cargaMasivaMutation.isPending}
+        onSubmit={({ archivo }) => cargaMasivaMutation.mutateAsync(archivo)}
+        onDownloadTemplate={() => loteService.plantillaCargaMasiva()}
       />
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -166,7 +184,7 @@ export function LotesPage() {
                 name="codigo_lote"
                 render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>CÃ³digo de lote</FormLabel>
+                    <FormLabel>Código de lote</FormLabel>
                     <FormControl>
                       <Input aria-invalid={!!fieldState.error} className={cn(fieldState.error && "border-destructive focus-visible:ring-destructive")} {...field} />
                     </FormControl>

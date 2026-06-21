@@ -4,8 +4,10 @@ import { AppBreadcrumb } from "@/shared/components/layout/AppBreadcrumb"
 import { AppHeader } from "@/shared/components/layout/AppHeader"
 import { AppSidebar } from "@/shared/components/layout/AppSidebar"
 import { SidebarInset, SidebarProvider } from "@/shared/components/ui/sidebar"
+import { useSyncSistemaParametros } from "@/modules/configuracion/parametros/hooks/useSyncSistemaParametros"
 
 export function AppLayout() {
+  useSyncSistemaParametros()
   return (
     <SidebarProvider>
       <AppSidebar />
