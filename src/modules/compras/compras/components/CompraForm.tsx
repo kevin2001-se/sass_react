@@ -81,7 +81,6 @@ export function CompraForm({ loading, serverErrors, onSubmit }: CompraFormProps)
       form.setValue("moneda", monedaDefault.value as CompraFormValues["moneda"])
     }
   }, [form, monedaDefault.value])
-
   const proveedoresQuery = useQuery({ queryKey: ["compras", "proveedores", "select"], queryFn: () => proveedorService.list({ estado: "1", per_page: 100 }) })
   const productosQuery = useQuery({ queryKey: ["productos", "compras", "select"], queryFn: () => productoService.getProductos({ estado: "1", per_page: 100 }) })
 

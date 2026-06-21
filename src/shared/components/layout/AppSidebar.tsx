@@ -134,6 +134,17 @@ const sidebarGroups: SidebarNavGroup[] = [
     ],
   },
   {
+    label: "Compras",
+    icon: ClipboardList,
+    children: [
+      { label: "Proveedores", path: "/compras/proveedores", permission: "proveedores.ver" },
+      { label: "Registrar compra", path: "/compras/registrar", permission: "compras.crear" },
+      { label: "Historial compras", path: "/compras/historial", permission: "compras.ver" },
+      { label: "Cuentas por pagar", path: "/compras/cuentas-por-pagar", permission: "compras.ver" },
+      { label: "Pagos proveedor", path: "/compras/pagos-proveedor", permission: "compras.ver" },
+    ],
+  },
+  {
     label: "Reportes",
     icon: BarChart3,
     children: [
